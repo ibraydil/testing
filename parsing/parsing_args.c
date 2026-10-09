@@ -1,0 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_args.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pokuzmic <pokuzmic@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/22 13:17:32 by pokuzmic          #+#    #+#             */
+/*   Updated: 2026/10/08 13:03:09 by pokuzmic         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "push_swap.h"
+
+void	free_words(char **words, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		free(words[i]);
+		i++;
+	}
+	free(words);
+}
+
+int	count_args(char **args)
+{
+	int	i;
+
+	i = 0;
+	while (args[i] != NULL)
+		i++;
+	return (i);
+}
+
+void	free_args(char **args)
+{
+	int	i;
+
+	if (args == NULL)
+		return ;
+	i = 0;
+	while (args[i] != NULL)
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+int	add_arg_words(char **args, char *str, int index)
+{
+	char	**split;
+	int		i;
+
+	split = split_args(str, " \t\n\v\f\r");
+	if (split == NULL || split[0] == NULL)
+	{
+		free(split);
+		args[index] = NULL;
+		return (-1);
+	}
+	i = 0;
+	while (split[i] != NULL)
+	{
+		args[index++] = split[i++];
+	}
+	free(split);
+	return (index);
+}
+
+char	**prepare_args(int argc, char **argv)
+{
+	char	**args;
+	int		i;
+	int		j;
+
+	j = count_numbers(argv);
+	if (argc < 2 || j < 0)
+		return (NULL);
+	args = malloc(sizeof(char *) * (j + 1));
+	if (args == NULL)
+		return (NULL);
+	i = 1;
+	j = 0;
+	while (i < argc)
+	{
+		if (!is_option(argv[i]))
+		{
+			j = add_arg_words(args, argv[i], j);
+			if (j == -1)
+				return (free_args(args), NULL);
+		}
+		i++;
+	}
+	args[j] = NULL;
+	return (args);
+}

@@ -1,0 +1,99 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   medium_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pokuzmic <pokuzmic@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/25 18:40:53 by pokuzmic          #+#    #+#             */
+/*   Updated: 2026/10/07 16:41:21 by pokuzmic         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "push_swap.h"
+
+void	sort_array(int *array, int size)
+{
+	int	i;
+	int	tmp;
+
+	i = 0;
+	while (i < size - 1)
+	{
+		if (array[i] > array[i + 1])
+		{
+			tmp = array[i];
+			array[i] = array[i + 1];
+			array[i + 1] = tmp;
+			i = 0;
+		}
+		else
+			i++;
+	}
+}
+
+int	*sorted_copy(t_stack *stack)
+{
+	int	*sorted;
+	int	i;
+
+	sorted = malloc(sizeof(int) * stack->size);
+	if (sorted == NULL)
+		return (NULL);
+	i = 0;
+	while (i < stack->size)
+	{
+		sorted[i] = stack->data[i];
+		i++;
+	}
+	sort_array(sorted, stack->size);
+	return (sorted);
+}
+
+int	calculate_chunk_size(int size)
+{
+	int	chunk;
+
+	chunk = 1;
+	while (chunk * chunk < size)
+		chunk++;
+	return (chunk * 5 / 2);
+}
+
+int	find_chunk_position(t_stack *stack, int *sorted, int start, int end)
+{
+	int	top;
+	int	bottom;
+
+	top = 0;
+	while (top < stack->size && (stack->data[top] < sorted[start]
+			|| stack->data[top] > sorted[end]))
+		top++;
+	if (top == stack->size)
+		return (-1);
+	bottom = stack->size - 1;
+	while (bottom > top && (stack->data[bottom] < sorted[start]
+			|| stack->data[bottom] > sorted[end]))
+		bottom--;
+	if (stack->size - bottom < top)
+		return (bottom);
+	return (top);
+}
+
+int	find_max_position(t_stack *stack)
+{
+	int	i;
+	int	max_position;
+
+	if (stack->size == 0)
+		return (-1);
+	i = 1;
+	max_position = 0;
+	while (i < stack->size)
+	{
+		if (stack->data[i] > stack->data[max_position])
+			max_position = i;
+		i++;
+	}
+	return (max_position);
+}
